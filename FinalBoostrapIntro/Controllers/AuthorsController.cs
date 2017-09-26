@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using FinalBoostrapIntro.DAL;
 using FinalBoostrapIntro.Models;
+using Newtonsoft.Json;
 
 namespace FinalBoostrapIntro.Controllers
 {
@@ -23,9 +24,25 @@ namespace FinalBoostrapIntro.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(object model)
+        public ActionResult Grid(int current, int rowCount, String sortExpression)
         {
-            return Content("test");
+            var data = new GridDto<Author>();
+            data.current = current;
+            data.rowCount = rowCount;
+
+            var startRow = rowCount * (current - 1);
+            var authors = db.Authors.OrderBy(x=>x.LastName).Skip(startRow).Take(rowCount).ToList();
+
+            data.rows = authors;
+            data.total = authors.Count;
+            var list = JsonConvert.SerializeObject(data,
+                Formatting.Indented,
+                new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                });
+
+            return Content(list, "application/json");
         }
 
         // GET: Authors/Details/5

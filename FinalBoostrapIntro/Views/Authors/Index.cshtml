@@ -13,44 +13,79 @@
 <div class="table-responsive">
     <table class="table table-bordered table-striped">
         <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.FirstName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LastName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Biography)
-                </th>
-                <th>Actions</th>
-            </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Biography)
+            </th>
+            <th>Actions</th>
+        </tr>
         </thead> 
 
         <tbody data-bind="foreach: authors">
-            <tr>
-                <td data-bind="text: FirstName"></td>
-                <td data-bind="text: LastName"></td>
-                <td data-bind="text: Biography"></td>
-                <td>
-                   <a data-bind="attr: { href : '@Url.Action("Details")/ + Id'}" class="btn btn-info">Details</a>
-                   <a data-bind="attr: { href : '@Url.Action("Edit")/ + Id'}" class="btn btn-primary">Edit</a>
-                   <a data-bind="attr: { href : '@Url.Action("Delete")/ + Id'}" class="btn btn-danger">Delete</a>               </td>
-            </tr>
+        <tr>
+            <td data-bind="text: FirstName"></td>
+            <td data-bind="text: LastName"></td>
+            <td data-bind="text: Biography"></td>
+            <td>
+                <a data-bind="attr: { href : '@Url.Action("Details")/ + Id'}" class="btn btn-info">Details</a>
+                <a data-bind="attr: { href : '@Url.Action("Edit")/ + Id'}" class="btn btn-primary">Edit</a>
+                <a data-bind="attr: { href : '@Url.Action("Delete")/ + Id'}" class="btn btn-danger">Delete</a>    
+            </td>
+        </tr>
         </tbody>
+    </table>
+</div>
+
+<div class="table-responsive">
+    <table id="authorGrid" class="table table-condensed table-hover table-striped">
+        <thead>
+        <tr>
+            <th data-column-id="FirstName">First Name</th>
+            <th data-column-id="LastName">Last Name</th>
+            <th data-column-id="Biography">Biography</th>
+            <th data-column-id="commands" data-formatter="commands" data-sortable="false"></th>
+        </tr>
+        </thead>
     </table>
 </div>
 
 @section Scripts{
     <script>
-      
+
         function ViewModel(authors) {
             var self = this;
             self.authors = authors;
         };
 
         var viewModel = new ViewModel(@Html.HtmlConvertToJson(Model));
-        ko.applyBindings(viewModel);  
+        ko.applyBindings(viewModel);
+
+        $(function() {
+            console.log("ready!");
+
+            var bootGridInstance = $('#authorGrid');
+
+            function InitializeBootGrid() {
+                bootGridInstance.bootgrid({
+                    ajax: true,
+                    url: "/Authors/Grid"
+                });
+            };
+
+            function ReloadGrid() {
+                console.log("Reloading Grid");
+                bootGridInstance.bootgrid("reload");
+            };
+
+            InitializeBootGrid();
+            ReloadGrid();
+        });
     </script>
 
 }
