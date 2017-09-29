@@ -10,7 +10,7 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-<div class="table-responsive">
+@*<div class="table-responsive">
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
@@ -40,12 +40,13 @@
         </tr>
         </tbody>
     </table>
-</div>
+</div>*@
 
 <div class="table-responsive">
     <table id="authorGrid" class="table table-condensed table-hover table-striped">
         <thead>
         <tr>
+            <th data-column-id="Id" data-type="numeric" data-visible="false">Id</th>
             <th data-column-id="FirstName">First Name</th>
             <th data-column-id="LastName">Last Name</th>
             <th data-column-id="Biography">Biography</th>
@@ -74,7 +75,14 @@
             function InitializeBootGrid() {
                 bootGridInstance.bootgrid({
                     ajax: true,
-                    url: "/Authors/Grid"
+                    url: "/Authors/Grid",
+                    formatters: {
+                        "commands": function (column, row) {
+                            return "<a href=\"/Authors/Details/"+ row.Id + "\" class=\"btn  btn-info command-details\" data-row-id=\"" + row.Id + "\"><span class=\"fa fa-ellipsis-h\"></span></a> " +
+                                "<a href=\"/Authors/Edit/" + row.Id + "\" class=\"btn  btn-primary command-edit\" data-row-id=\"" + row.Id + "\"><span class=\"fa fa-pencil\"></span></a> " +
+                                "<a href=\"/Authors/Delete/" + row.Id + "\" class=\"btn btn-danger command-delete\" data-row-id=\"" + row.Id + "\"><span class=\"fa fa-trash-o\"></span></a>";
+                        }
+                    }
                 });
             };
 
