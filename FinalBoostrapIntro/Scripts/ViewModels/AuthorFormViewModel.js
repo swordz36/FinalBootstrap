@@ -43,7 +43,7 @@
                 location.href = './'
             else
                 location.href = '../';
-        }, 1000);
+        }, 2500);
     };
 
     self.errorSave = function () {

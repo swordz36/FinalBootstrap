@@ -46,10 +46,10 @@
     <table id="authorGrid" class="table table-condensed table-hover table-striped">
         <thead>
         <tr>
-            <th data-column-id="Id" data-type="numeric" data-visible="false">Id</th>
-            <th data-column-id="FirstName">First Name</th>
-            <th data-column-id="LastName">Last Name</th>
-            <th data-column-id="Biography">Biography</th>
+            <th data-column-id="id" data-type="numeric" data-visible="false">Id</th>
+            <th data-column-id="firstName">First Name</th>
+            <th data-column-id="lastName">Last Name</th>
+            <th data-column-id="biography">Biography</th>
             <th data-column-id="commands" data-formatter="commands" data-sortable="false"></th>
         </tr>
         </thead>
@@ -57,19 +57,24 @@
 </div>
 
 @section Scripts{
+    
+    @Scripts.Render("/Scripts/ViewModels/AuthorIndexViewModel.js")
     <script>
 
-        function ViewModel(authors) {
+        var viewModel = new AuthorIndexViewModel(@Html.HtmlConvertToJson(Model));
+        ko.applyBindings(viewModel);
+
+        @*function ViewModel(authors) {
             var self = this;
             self.authors = authors;
         };
 
         var viewModel = new ViewModel(@Html.HtmlConvertToJson(Model));
-        ko.applyBindings(viewModel);
+        ko.applyBindings(viewModel);*@
 
         $(function() {
             console.log("ready!");
-
+            
             var bootGridInstance = $('#authorGrid');
 
             function InitializeBootGrid() {
@@ -78,11 +83,26 @@
                     url: "/Authors/Grid",
                     formatters: {
                         "commands": function (column, row) {
-                            return "<a href=\"/Authors/Details/"+ row.Id + "\" class=\"btn  btn-info command-details\" data-row-id=\"" + row.Id + "\"><span class=\"fa fa-ellipsis-h\"></span></a> " +
-                                "<a href=\"/Authors/Edit/" + row.Id + "\" class=\"btn  btn-primary command-edit\" data-row-id=\"" + row.Id + "\"><span class=\"fa fa-pencil\"></span></a> " +
-                                "<a href=\"/Authors/Delete/" + row.Id + "\" class=\"btn btn-danger command-delete\" data-row-id=\"" + row.Id + "\"><span class=\"fa fa-trash-o\"></span></a>";
+                            return "<a href=\"/Authors/Details/"+ row.id + "\" class=\"btn  btn-info command-details\" data-row-id=\"" + row.id + "\"><span class=\"fa fa-ellipsis-h\"></span></a> " +
+                                "<a href=\"/Authors/Edit/" + row.id + "\" class=\"btn  btn-primary command-edit\" data-row-id=\"" + row.id + "\"><span class=\"fa fa-pencil\"></span></a> " +
+                                "<a data-toggle=\"modal\"  href=\"/Authors/Delete/" + row.id + "\" class=\"btn btn-danger command-delete\" data-row-id=\"" + row.id + "\"><span class=\"fa fa-trash-o\"></span></a>";
                         }
+                    },
+                    labels: {
+                        noResults :  'There are no authors to display. Click @Html.ActionLink("here", "Create") to create one now.'
                     }
+                }).on("loaded.rs.jquery.bootgrid", function()
+                {
+                    /* Executes after data is loaded and rendered */
+                    bootGridInstance.find(".command-edit").on("click", function(e)
+                    {
+                        alert("You pressed edit on row: " + $(this).data("row-id"));
+                    }).end().find(".command-delete").on("click", function(e) {
+                        showDeleteModal;
+                        alert("You pressed delete on row: " + $(this).data("row-id"));
+                    }).end().find(".command-details").on("click", function(e) {
+                        alert("You pressed details on row: " + $(this).data("row-id"));
+                    });
                 });
             };
 
